@@ -10,7 +10,9 @@ scenarios = {
     "1": "Simple PI scenario", 
     "2": "PI to exfiltrate data", 
     "3": "PI to leak prompt", 
-    "4": "PI to override instructions to write in forbidden file"
+    "4": "PI to override instructions to write in forbidden file",
+    "5": "HTML comment injection",
+    "6": "HTML hidden text injection"
 }
 
 def selectScenario() -> int:
@@ -33,7 +35,7 @@ def selectScenario() -> int:
     return int(user_choice)
 
 def main():
-    agent = Agent("gpt-4.1-mini", ["fetch_txt", "write_file"])
+    agent = Agent("gpt-4.1-mini", ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website"])
 
     user_selection = selectScenario()
 

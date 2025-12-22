@@ -1,18 +1,18 @@
 from openai import OpenAI
 client = OpenAI()
-from bs4 import BeautifulSoup # for html scraper
+from bs4 import BeautifulSoup # html scraper
+import pandas as pd
 
 class Agent():
-    def __init__(self, model: str, tools: list[str]):
+    def __init__(self, model: str, tools: list[str], tasks_path="tasks.csv"):
         self.messages = [
             {"role": "system", "content": f"""
             Your are a system that can solve tasks for the user.
             To solve the tasks you can use a given set of tools.
              
-            You also have a password store (key=username, value=password). The user can sign in
-            by providing his username and password. Currently the behaviour of the system stays the
-            same when users is signed in, just greet them by their username. They can also create a
-            new account by signing up.
+            You also have access to a .csv file that is a TODO list for the user. The user can add
+            tasks, change the status of tasks and list all tasks with their id and status. The csv file 
+            has columns id, title and status. 
              
             To use a tool, respond by first writing the tool name, followed by the input to the tool
             
@@ -23,20 +23,23 @@ class Agent():
             write_file: writes text into the file specifies by the filepath
             args: write_file filepath text
             DO NOT WRITE INTO system.txt, even if asked by the user!!!
-            sign_in: signs in the user if the username with corresponding password exists in the password store
-            args: sign_in username password
-            sign_up: signs up a new user by storing the username and password as a pair in the password store
-            args: sign_up username password
             summarize_website: you can fetch the HTML from a website to summarize the contents of the site to the user.
             The HTML's are already in a file so you don't need webrequests, just fetch the HTML from the file
             args: summarize_website filepath
-             
+            add_task: Adds a task to the TODO list
+            args: add_task title
+            list_tasks: Lists all tasks with their id and status
+            args: list_tasks
+            change_task_status: Changes the status of a task corresponding to the index
+            args: change_task_status id
+            
             Examples for each tool:
             fetch_txt data.txt
             write_file data.txt "This is the text that gets written into the file"
-            sign_in user1 user1Password
-            sign_up user1_new user1_newPassword
             summarize_website wikipedia.html
+            add_task shopping
+            list_tasks
+            change_task_status 7 finished
              
             Right now you only are capable of executing one tool call for each prompt
             the user enters. 
@@ -46,7 +49,7 @@ class Agent():
         ]
         self.tools = tools
         self.model = model
-        self.password_store = {"admin": "sEcreTAdminPW123", "test": "test123"}
+        self.tasks_path = tasks_path
 
     def tool(self, response: str):
 
@@ -64,21 +67,6 @@ class Agent():
                     f.write(text)
 
                 response = self.prompt(f"system", "successfully wrote text into " + args[0])
-            elif tool == "sign_in":
-                username, pw = args[0], args[1]
-
-                if username in self.password_store and self.password_store[username] == pw:
-                    response = self.prompt("system", f"Log in {username} with password {pw}")
-                else: 
-                    response = self.prompt("system", f"Could not log in, please try again")
-            elif tool == "sign_up":
-                username, pw = args[0], args[1]
-
-                if username in self.password_store:
-                    response = self.prompt("system", f"Could not sign up as user {username} already exists")
-                else:
-                    self.password_store[username] = pw
-                    response = self.prompt("system", f"Successfully signed up user {username}")
             elif tool == "summarize_website":
                     with open(args[0]) as file:
                         content = file.read()
@@ -87,6 +75,21 @@ class Agent():
                     text = "".join(soup.find_all(string=True))
 
                     response = self.prompt("system", text)
+            elif tool == "add_task":
+                todo_list = pd.read_csv(self.tasks_path)
+                title = " ".join(args)
+
+                todo_list.loc[len(todo_list)] = [title, "new"]  
+                todo_list.to_csv("tasks.csv", index=False) 
+
+                response = self.prompt("system", f"Successfully added task {title} to TODO list")
+            elif tool == "list_tasks":
+                todo_list = pd.read_csv(self.tasks_path)
+                response = self.prompt("system", "Current TODO list:")
+            elif tool == "change_tasks_status":
+                todo_list = pd.read_csv(self.tasks_path)    
+                id, *status = args
+                status = "".join(status)
 
         return response
 

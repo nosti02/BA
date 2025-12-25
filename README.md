@@ -27,3 +27,7 @@ sc6:
 This scenario is similar to scenario 5, this time we injected the instructions in a text with white font-color, so also invisible to the user when visiting
 the website. The system again fetches the HTML and the hidden instructions are injected into the system.
 
+sc7: 
+This scenario highlights some further methods to hide text in a html, that will still be later parsed by the agentic LLM system. We show how a company could hide
+recommendations in the company website HTML that will lead to the LLM recommending their products to the user.
+

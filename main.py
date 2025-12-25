@@ -21,7 +21,8 @@ scenarios = {
     "3": "PI to leak prompt", 
     "4": "PI to override instructions to write in forbidden file",
     "5": "HTML comment injection",
-    "6": "HTML hidden text injection"
+    "6": "HTML hidden text injection",
+    "7": "HTML seller website indirect prompt injection"
 }
 
 def delete_copy_files():

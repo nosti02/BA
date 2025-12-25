@@ -2,13 +2,13 @@ from openai import OpenAI
 client = OpenAI()
 from bs4 import BeautifulSoup # html scraper
 import pandas as pd
-import instruction_defines
+import defines
 import defenses
 
 class Agent():
     def __init__(self, model: str, tools: list[str], tasks_path="tasks.csv"):
         self.messages = [
-            instruction_defines.main_system_instruction
+            defines.main_system_instruction
         ]
         self.tools = tools
         self.model = model

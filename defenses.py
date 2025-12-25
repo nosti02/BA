@@ -1,4 +1,4 @@
-import instruction_defines
+import defines
 import base64
 
 from openai import OpenAI
@@ -49,7 +49,7 @@ def encoding(prompt: str) -> str:
 # returns true if prompt injection discovered
 def detection_llm(prompt: str) -> bool:
 
-    detection_prompt = instruction_defines.detection_instruction + prompt
+    detection_prompt = defines.detection_instruction + prompt
 
     detection_result = client.chat.completions.create(
         model="gpt-4.1-nano",   
@@ -59,7 +59,7 @@ def detection_llm(prompt: str) -> bool:
     response_content = detection_result
     print("Detection llm output: " + response_content)
 
-    if(response_content != instruction_defines.secret_string):
+    if(response_content != defines.secret_string):
         print("PROMPT INJECTION DISCOVERED")
         return True
     
@@ -69,6 +69,6 @@ def detection_llm(prompt: str) -> bool:
 
 def sandwitch_prevention(prompt: str) -> str:
 
-    sandwitched_prompt = prompt + "\n Remember your instructions: " + instruction_defines.system_instruction_text
+    sandwitched_prompt = prompt + "\n Remember your instructions: " + defines.system_instruction_text
 
     return sandwitched_prompt

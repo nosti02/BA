@@ -35,7 +35,8 @@ def selectScenario() -> int:
     return int(user_choice)
 
 def main():
-    agent = Agent("gpt-4.1-mini", ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website"])
+    agent = Agent("gpt-4.1-mini", ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website", "list_tasks",
+                                   "add_task", "change_task_status"])
 
     user_selection = selectScenario()
 
@@ -43,7 +44,7 @@ def main():
         scenario.scenarios_list[user_selection - 1].run()
         quit()
 
-    console.print("How can i assist you today? (exit to quit)")
+    console.print("How can I assist you today? (exit to quit)")
 
     while True:
         user_prompt = Prompt.ask("You: ")

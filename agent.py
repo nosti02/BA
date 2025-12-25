@@ -6,13 +6,30 @@ import defines
 import defenses
 
 class Agent():
-    def __init__(self, model: str, tools: list[str], tasks_path="tasks.csv"):
+    def __init__(self, model: str, tools: list[str], defense = None, tasks_path="tasks.csv"):
         self.messages = [
             defines.main_system_instruction
         ]
         self.tools = tools
         self.model = model
         self.tasks_path = tasks_path
+        self.defense = defense
+
+    def add_defense(self, message) -> str:
+        if(self.defense == "No defense"):
+            return message
+        elif(self.defense == "delimiting"):
+            return defenses.delimiting(message)
+        elif(self.defense == "datamarking"):
+            return defenses.datamarking(message)
+        elif(self.defense == "encoding"):
+            return defenses.encoding(message)
+        elif(self.defense == "sandwitch_prevention"):
+            return defenses.sandwitch_prevention(message)
+        elif(self.defense == "detection_llm"):
+            return defenses.detection_llm(message)
+
+        return message
 
     def tool(self, response: str):
 
@@ -66,10 +83,10 @@ class Agent():
     
     def prompt(self, role, prompt_text):
 
-        self.messages.append({"role": role, "content": prompt_text})
+        if role == "system" and self.defense != None:
+            prompt_text = self.add_defense(prompt_text)
 
-        # if role == "system":
-        #     prompt_text = defenses.sandwitch_prevention(prompt_text)
+        self.messages.append({"role": role, "content": prompt_text})
 
         response = client.chat.completions.create(
             model=self.model,

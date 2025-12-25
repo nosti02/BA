@@ -1,14 +1,18 @@
 from agent import Agent
 from rich.console import Console
 from rich.prompt import Prompt
+
 import scenario
 import defines
+import defenses
 
 import shutil
 import atexit
 import os
 
 console = Console()
+agent_model = "gpt-4.1-mini"
+
 
 scenarios = {
     "0": "Write your own prompt", 
@@ -45,7 +49,7 @@ def copy_files():
     shutil.copyfile(defines.simple_PI_template, defines.simple_PI_copy)
     shutil.copyfile(defines.PI_exfiltration_template, defines.PI_exfiltration_copy)
     shutil.copyfile(defines.PI_prompt_leaking_template, defines.PI_prompt_leaking_copy)
-    shutil.copyfile(defines.helper_template, defines.simple_PI_copy)
+    shutil.copyfile(defines.helper_template, defines.helper_copy)
     shutil.copyfile(defines.system_template, defines.system_copy)    
 
     return
@@ -69,17 +73,40 @@ def selectScenario() -> int:
 
     return int(user_choice)
 
+def selectDefense() -> int:
+    console.print("\nPlease select if you want to try out a defense")
+
+    idx = 0
+    for defense, description in defenses.defenses_list:
+        console.print(str(idx) + ". " + defense + ": " + description)
+        idx+=1
+
+    while True:
+        user_choice = Prompt.ask("Your selection: ")
+
+        if(user_choice == "exit"):
+            console.print("Bye!")
+            quit()
+
+        if int(user_choice) >= 0 and int(user_choice) < len(defenses.defenses_list):
+            break
+        else:
+            console.print(f"Please input a valid number (0–{len(defenses.defenses_list) - 1})")
+
+    return int(user_choice)
+
 def main():
     copy_files()
 
-    agent = Agent("gpt-4.1-mini", ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website", "list_tasks",
-                                   "add_task", "change_task_status"])
+    scenario_selection = selectScenario()
+    defense_selection = selectDefense()
 
-    user_selection = selectScenario()
-
-    if(user_selection > 0):
-        scenario.scenarios_list[user_selection - 1].run()
-        quit()
+    if (scenario_selection > 0):
+        scenario.scenarios_list[scenario_selection- 1].run(defenses.defenses_list[defense_selection][0])
+        exit()
+    
+    agent = Agent(agent_model, ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website", "list_tasks",
+                                "add_task", "change_task_status"], defenses.defenses_list[defense_selection][0])
 
     console.print("Please do not change the template files!")
     console.print("How can I assist you today? (exit to quit)")

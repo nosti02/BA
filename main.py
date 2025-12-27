@@ -45,6 +45,8 @@ def delete_copy_files():
         os.remove(defines.helper_copy)
     if(os.path.exists(defines.system_copy)):
         os.remove(defines.system_copy)
+    if(os.path.exists(defines.memory_copy)):
+        os.remove(defines.memory_copy)
 
     return
 
@@ -58,6 +60,7 @@ def copy_files():
     shutil.copyfile(defines.PI_prompt_leaking_template, defines.PI_prompt_leaking_copy)
     shutil.copyfile(defines.helper_template, defines.helper_copy)
     shutil.copyfile(defines.system_template, defines.system_copy)    
+    shutil.copyfile(defines.memory_template, defines.memory_copy)
 
     return
 

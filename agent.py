@@ -35,24 +35,29 @@ class Agent():
         return message
 
     def tool(self, response: str):
+        lines = response.split("\n")
+        final_response = []
 
-        if any(response.startswith(tool) for tool in self.tools):
-            tool, *args = response.split(" ")
+        for line in lines:
+            line = line.strip()
 
-            if(tool == "fetch_txt"):
-                path = self.dir_path + args[0]
-                with open(path) as file:
-                    content = "".join(file.readlines())
+            if any(line.startswith(tool) for tool in self.tools):
+                tool, *args = line.split(" ")
 
-                response = self.prompt("system", content)
-            elif tool == "write_file":
-                text = args[1]
-                path = self.dir_path + args[0]
-                with open(path, "w") as f:
-                    f.write(text)
+                if(tool == "fetch_txt"):
+                    path = self.dir_path + args[0]
+                    with open(path) as file:
+                        content = "".join(file.readlines())
 
-                response = self.prompt(f"system", "successfully wrote text into " + args[0])
-            elif tool == "summarize_website":
+                    final_response.append(self.prompt("system", content))
+                elif tool == "write_file":
+                    text = args[1]
+                    path = self.dir_path + args[0]
+                    with open(path, "w") as f:
+                        f.write(text)
+
+                    final_response.append(self.prompt(f"system", "successfully wrote text into " + args[0]))
+                elif tool == "summarize_website":
                     path = self.dir_path + args[0]
                     with open(path) as file:
                         content = file.read()
@@ -60,54 +65,55 @@ class Agent():
                     soup = BeautifulSoup(content, "html.parser")
                     text = "".join(soup.find_all(string=True))
 
-                    response = self.prompt("system", text)
-            elif tool == "add_task":
-                todo_list = pd.read_csv(self.tasks_path)
-                title = " ".join(args)
+                    final_response.append(self.prompt("system", text))
+                elif tool == "add_task":
+                    todo_list = pd.read_csv(self.tasks_path)
+                    title = " ".join(args)
 
-                todo_list.loc[len(todo_list)] = [title, "new"]  
-                todo_list.to_csv("tasks.csv", index=False) 
+                    todo_list.loc[len(todo_list)] = [title, "new"]  
+                    todo_list.to_csv("tasks.csv", index=False) 
 
-                response = self.prompt("system", f"Successfully added task {title} to TODO list")
-            elif tool == "list_tasks":
-                todo_list = pd.read_csv(self.tasks_path)
-                list_str = todo_list.to_string()
-                
-                response = self.prompt("system", f"Current TODO list: {list_str}")
-            elif tool == "change_task_status":
-                todo_list = pd.read_csv(self.tasks_path) 
-                id, *status = args
-                status = "".join(status)
-                
-                todo_list.loc[int(id), 'status'] = status
-                todo_list.to_csv(self.tasks_path, index=False)
+                    final_response.append(self.prompt("system", f"Successfully added task {title} to TODO list"))
+                elif tool == "list_tasks":
+                    todo_list = pd.read_csv(self.tasks_path)
+                    list_str = todo_list.to_string()
+                    
+                    final_response.append(self.prompt("system", f"Current TODO list: {list_str}"))
+                elif tool == "change_task_status":
+                    todo_list = pd.read_csv(self.tasks_path) 
+                    id, *status = args
+                    status = "".join(status)
+                    
+                    todo_list.loc[int(id), 'status'] = status
+                    todo_list.to_csv(self.tasks_path, index=False)
 
-                response = self.prompt("system", f"Status of task '{todo_list.loc[int(id), 'title']}' changed to {status}")
-            elif tool == "change_memory":
-                field, *value = args
-                value = " ".join(value)
+                    final_response.append(self.prompt("system", f"Status of task '{todo_list.loc[int(id), 'title']}' changed to {status}"))
+                elif tool == "change_memory":
+                    field, *value = args
+                    value = " ".join(value)
 
-                with open(self.memory_path, "r") as f:
-                    memory = json.load(f)
+                    with open(self.memory_path, "r") as f:
+                        memory = json.load(f)
 
-                memory[field] = value
+                    memory[field] = value
 
-                with open(self.memory_path, "w") as f:
-                    json.dump(memory, f, indent=2)
+                    with open(self.memory_path, "w") as f:
+                        json.dump(memory, f, indent=2)
 
-                response = self.prompt("system", f"Field {field} updated to {value}")
-            elif tool == "get_memory":
-                field = args[0]
+                    final_response.append(self.prompt("system", f"Field {field} updated to {value}"))
+                elif tool == "get_memory":
+                    field = args[0]
 
-                with open(self.memory_path, "r") as f:
-                    memory = json.load(f)
+                    with open(self.memory_path, "r") as f:
+                        memory = json.load(f)
 
-                value = memory[field] 
-                
-                response = self.prompt("system", f"{value}")
-
-
-        return response
+                    value = memory[field] 
+                    
+                    final_response.append(self.prompt("system", f"{value}"))
+            else:
+                final_response.append(line)
+    
+        return "\n".join(final_response)
 
     
     def prompt(self, role, prompt_text):
@@ -132,7 +138,7 @@ class Agent():
     def handleUserPrompt(self, prompt: str):
 
         self.messages.append({"role": "system", "content": "If you need to call any tools for the task the user gave you, use the tool as instruted at the start, for example:\n"
-                              "fetch_txt data.txt"})
+                              "fetch_txt data.txt or chain calls together like fetch_txt data.txt\nfetch_txt user.txt"})
         
         response = self.prompt("user", prompt)
 

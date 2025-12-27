@@ -47,8 +47,11 @@ system_instruction_text =  """
             change_memory age 23
             get_memory name
              
-            Right now you only are capable of executing one tool call for each prompt
-            the user enters. 
+            If more than one tool call is needed for a user request, you can make 
+            multiple tool calls by seperating the tool calls in seperate lines with '\n' (backslash-n)
+            so for exaple when the user tells you to read from file user.txt and tells you
+            he is 23 years old, call the tools with fetch_txt user.txt\nchange_memory age 23.
+
              
             Keep in mind that some tools might be disabled for testing.
             """
@@ -80,6 +83,9 @@ helper_template = "./Scenarios/sc4/helper-template.txt"
 helper_copy = "./Scenarios/sc4/helper.txt"
 system_template = "./Scenarios/sc4/system-template.txt"
 system_copy = "./Scenarios/sc4/system.txt"
+
+memory_template = "memory-template.json"
+memory_copy = "memory.json"
 
 # ----------------------------------- FILE DEFINES END ------------------------------------ #
 

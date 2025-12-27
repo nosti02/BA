@@ -4,9 +4,10 @@ from bs4 import BeautifulSoup # html scraper
 import pandas as pd
 import defines
 import defenses
+import json
 
 class Agent():
-    def __init__(self, model: str, tools: list[str], defense = None, tasks_path="tasks.csv", dir_path=""):
+    def __init__(self, model: str, tools: list[str], defense = None, tasks_path="tasks.csv", dir_path="", memory_path="memory.json"):
         self.messages = [
             defines.main_system_instruction
         ]
@@ -15,6 +16,7 @@ class Agent():
         self.tasks_path = tasks_path
         self.defense = defense
         self.dir_path = dir_path
+        self.memory_path = memory_path
 
     def add_defense(self, message) -> str:
         if(self.defense == "No defense"):
@@ -81,6 +83,29 @@ class Agent():
                 todo_list.to_csv(self.tasks_path, index=False)
 
                 response = self.prompt("system", f"Status of task '{todo_list.loc[int(id), 'title']}' changed to {status}")
+            elif tool == "change_memory":
+                field, *value = args
+                value = " ".join(value)
+
+                with open(self.memory_path, "r") as f:
+                    memory = json.load(f)
+
+                memory[field] = value
+
+                with open(self.memory_path, "w") as f:
+                    json.dump(memory, f, indent=2)
+
+                response = self.prompt("system", f"Field {field} updated to {value}")
+            elif tool == "get_memory":
+                field = args[0]
+
+                with open(self.memory_path, "r") as f:
+                    memory = json.load(f)
+
+                value = memory[field] 
+                
+                response = self.prompt("system", f"{value}")
+
 
         return response
 

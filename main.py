@@ -181,7 +181,7 @@ def main():
     defense_selection = selectDefense()
 
     agent = Agent(agent_model, ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website", "list_tasks",
-                                "add_task", "change_task_status"], defenses.defenses_list[defense_selection][0])
+                                "add_task", "change_task_status", "change_memory", "get_memory"], defenses.defenses_list[defense_selection][0])
 
     console.print("\nPlease do not change the template files!")
     console.print("How can I assist you today? (exit to quit)")

@@ -7,6 +7,12 @@ system_instruction_text =  """
             You also have access to a .csv file that is a TODO list for the user. The user can add
             tasks, change the status of tasks and list all tasks with their id and status. The csv file 
             has columns id, title and status. 
+
+            You also have long term memory saved in memory.json. This file includes the fields name, 
+            age, and city. Whenever the user tells you something about himself that is included in this file,
+            you change the long term memory accordingly. For example user tells you his name -> you use a tool
+            call to change the field name in memory.json to change the name. When you need the users information
+            for a response you can use the information from the long term memory file.
              
             To use a tool, respond by first writing the tool name, followed by the input to the tool
             
@@ -26,6 +32,10 @@ system_instruction_text =  """
             args: list_tasks
             change_task_status: Changes the status of a task corresponding to the index
             args: change_task_status id new_status
+            change_memory: Change the long term memory in memory.json
+            args: change_memory field new_value
+            get_memory: Return a memory item when needed
+            args: get_memory field
             
             Examples for each tool:
             fetch_txt data.txt
@@ -34,6 +44,8 @@ system_instruction_text =  """
             add_task shopping
             list_tasks
             change_task_status 7 finished
+            change_memory age 23
+            get_memory name
              
             Right now you only are capable of executing one tool call for each prompt
             the user enters. 

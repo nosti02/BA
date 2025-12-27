@@ -2,7 +2,8 @@ from agent import Agent
 from rich.console import Console
 from rich.prompt import Prompt
 
-import scenario
+import Scenarios.scenario as scenario
+import Games.game as game
 import defines
 import defenses
 
@@ -15,7 +16,6 @@ agent_model = "gpt-4.1-mini"
 
 
 scenarios = {
-    "0": "Write your own prompt", 
     "1": "Simple PI scenario", 
     "2": "PI to exfiltrate data", 
     "3": "PI to leak prompt", 
@@ -23,6 +23,12 @@ scenarios = {
     "5": "HTML comment injection",
     "6": "HTML hidden text injection",
     "7": "HTML seller website indirect prompt injection"
+}
+
+games = {
+    "1": "Normal easy prompt injection",
+    "2": "Indirect prompt injection read only",
+    "3": "Indirect prompt injection read and write"
 }
 
 def delete_copy_files():
@@ -55,8 +61,32 @@ def copy_files():
 
     return
 
+def selectMode() -> int:
+    console.print("Welcome, please select which mode you want to run [exit to quit]")
+    console.print("1: Chat freely with the model")
+    console.print("2: Run a predefined scenario")
+    console.print("3: Run a game to teach you an attack or a defense")
+
+    while True:
+        user_choice = Prompt.ask("Your selection: ")
+
+        if(user_choice == "exit"):
+            console.print("Bye!")
+            quit()
+
+        try:
+            user_choice = int(user_choice)
+        except ValueError:
+            console.print("Please enter a valid number")
+            continue
+
+        if int(user_choice) in [1,2,3]:
+            return user_choice
+        else:
+            console.print(f"Please input a valid number (1-3)")
+
 def selectScenario() -> int:
-    console.print("Please select if you want to run a scenario or chat with the model yourself.\nDescriptions for the scenarios are in the README file.")
+    console.print("Please select the scenario you want to run [exit to quit].\nDescriptions for the scenarios are in the README file.")
     for number, prompt in scenarios.items():
         console.print(number + ": " + prompt)
 
@@ -67,15 +97,46 @@ def selectScenario() -> int:
             console.print("Bye!")
             quit()
 
+        try:
+            user_choice = int(user_choice)
+        except ValueError:
+            console.print("Please enter a valid number")
+            continue
+
         if user_choice in scenarios:
             break
         else:
-            console.print(f"Please input a valid number (0–{len(scenarios) - 1})")
+            console.print(f"Please input a valid number (1-{len(scenarios)})")
+
+    return int(user_choice)
+
+def selectGame() -> int:
+    console.print("Please select the game you want to run [exit to quit].")
+    for number, desc in games.items():
+        console.print(number + ": " + desc)
+
+    while True:
+        user_choice = Prompt.ask("Your selection: ")
+
+        if(user_choice == "exit"):
+            console.print("Bye!")
+            quit()
+
+        try:
+            user_choice = int(user_choice)
+        except ValueError:
+            console.print("Please enter a valid number")
+            continue
+
+        if int(user_choice) >= 1 and int(user_choice) <= len(games):
+            break
+        else:
+            console.print(f"Please input a valid number (1-{len(games)})")
 
     return int(user_choice)
 
 def selectDefense() -> int:
-    console.print("\nPlease select if you want to try out a defense")
+    console.print("\nPlease select if you want to try out a defense [exit to quit]")
 
     idx = 0
     for defense, description in defenses.defenses_list:
@@ -89,27 +150,40 @@ def selectDefense() -> int:
             console.print("Bye!")
             quit()
 
+        try:
+            user_choice = int(user_choice)
+        except ValueError:
+            console.print("Please enter a valid number")
+            continue
+
         if int(user_choice) >= 0 and int(user_choice) < len(defenses.defenses_list):
             break
         else:
-            console.print(f"Please input a valid number (0–{len(defenses.defenses_list) - 1})")
+            console.print(f"Please input a valid number (0-{len(defenses.defenses_list) - 1})")
 
     return int(user_choice)
 
 def main():
     copy_files()
 
-    scenario_selection = selectScenario()
-    defense_selection = selectDefense()
+    mode = selectMode()
 
-    if (scenario_selection > 0):
+    if(mode == 2):
+        scenario_selection = selectScenario()
+        defense_selection = selectDefense()
         scenario.scenarios_list[scenario_selection- 1].run(defenses.defenses_list[defense_selection][0])
         exit()
+    elif(mode == 3):
+        game_selection = selectGame()
+        game.games_list[game_selection - 1].run()
+        exit()
     
+    defense_selection = selectDefense()
+
     agent = Agent(agent_model, ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website", "list_tasks",
                                 "add_task", "change_task_status"], defenses.defenses_list[defense_selection][0])
 
-    console.print("Please do not change the template files!")
+    console.print("\nPlease do not change the template files!")
     console.print("How can I assist you today? (exit to quit)")
 
     while True:

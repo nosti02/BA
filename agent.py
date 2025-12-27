@@ -6,7 +6,7 @@ import defines
 import defenses
 
 class Agent():
-    def __init__(self, model: str, tools: list[str], defense = None, tasks_path="tasks.csv"):
+    def __init__(self, model: str, tools: list[str], defense = None, tasks_path="tasks.csv", dir_path=""):
         self.messages = [
             defines.main_system_instruction
         ]
@@ -14,6 +14,7 @@ class Agent():
         self.model = model
         self.tasks_path = tasks_path
         self.defense = defense
+        self.dir_path = dir_path
 
     def add_defense(self, message) -> str:
         if(self.defense == "No defense"):
@@ -37,18 +38,21 @@ class Agent():
             tool, *args = response.split(" ")
 
             if(tool == "fetch_txt"):
-                with open(args[0]) as file:
+                path = self.dir_path + args[0]
+                with open(path) as file:
                     content = "".join(file.readlines())
 
                 response = self.prompt("system", content)
             elif tool == "write_file":
                 text = args[1]
-                with open(args[0], "w") as f:
+                path = self.dir_path + args[0]
+                with open(path, "w") as f:
                     f.write(text)
 
                 response = self.prompt(f"system", "successfully wrote text into " + args[0])
             elif tool == "summarize_website":
-                    with open(args[0]) as file:
+                    path = self.dir_path + args[0]
+                    with open(path) as file:
                         content = file.read()
 
                     soup = BeautifulSoup(content, "html.parser")

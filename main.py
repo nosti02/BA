@@ -103,7 +103,7 @@ def selectScenario() -> int:
             console.print("Please enter a valid number")
             continue
 
-        if user_choice in scenarios:
+        if user_choice > 0 and user_choice <= len(scenarios):
             break
         else:
             console.print(f"Please input a valid number (1-{len(scenarios)})")

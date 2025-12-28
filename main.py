@@ -35,16 +35,6 @@ def delete_copy_files():
 
     if(os.path.exists(defines.todo_list_copy)):
         os.remove(defines.todo_list_copy)
-    if(os.path.exists(defines.simple_PI_copy)):
-        os.remove(defines.simple_PI_copy)
-    if(os.path.exists(defines.PI_exfiltration_copy)):
-        os.remove(defines.PI_exfiltration_copy)
-    if(os.path.exists(defines.PI_prompt_leaking_copy)):
-        os.remove(defines.PI_prompt_leaking_copy)
-    if(os.path.exists(defines.helper_copy)):
-        os.remove(defines.helper_copy)
-    if(os.path.exists(defines.system_copy)):
-        os.remove(defines.system_copy)
     if(os.path.exists(defines.memory_copy)):
         os.remove(defines.memory_copy)
 
@@ -54,12 +44,7 @@ atexit.register(delete_copy_files)
 
 def copy_files():
 
-    shutil.copyfile(defines.todo_list_template, defines.todo_list_copy)
-    shutil.copyfile(defines.simple_PI_template, defines.simple_PI_copy)
-    shutil.copyfile(defines.PI_exfiltration_template, defines.PI_exfiltration_copy)
-    shutil.copyfile(defines.PI_prompt_leaking_template, defines.PI_prompt_leaking_copy)
-    shutil.copyfile(defines.helper_template, defines.helper_copy)
-    shutil.copyfile(defines.system_template, defines.system_copy)    
+    shutil.copyfile(defines.todo_list_template, defines.todo_list_copy)  
     shutil.copyfile(defines.memory_template, defines.memory_copy)
 
     return
@@ -167,7 +152,6 @@ def selectDefense() -> int:
     return int(user_choice)
 
 def main():
-    copy_files()
 
     mode = selectMode()
 
@@ -181,6 +165,8 @@ def main():
         game.games_list[game_selection - 1].run()
         exit()
     
+    copy_files()
+
     defense_selection = selectDefense()
 
     agent = Agent(agent_model, ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website", "list_tasks",

@@ -14,7 +14,6 @@ import os
 console = Console()
 agent_model = "gpt-4.1-mini"
 
-
 scenarios = {
     "1": "Simple PI scenario", 
     "2": "PI to exfiltrate data", 
@@ -22,7 +21,8 @@ scenarios = {
     "4": "PI to override instructions to write in forbidden file",
     "5": "HTML comment injection",
     "6": "HTML hidden text injection",
-    "7": "HTML seller website indirect prompt injection"
+    "7": "HTML seller website indirect prompt injection",
+    "8": "Persistent memory injection"
 }
 
 games = {

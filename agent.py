@@ -1,6 +1,6 @@
 from openai import OpenAI
 client = OpenAI()
-from bs4 import BeautifulSoup # html scraper
+from bs4 import BeautifulSoup
 import pandas as pd
 import defines
 import defenses
@@ -16,7 +16,7 @@ class Agent():
         self.tasks_path = tasks_path
         self.defense = defense
         self.dir_path = dir_path
-        self.memory_path = memory_path
+        self.memory_path = dir_path + memory_path
 
     def add_defense(self, message) -> str:
         if(self.defense == "No defense"):
@@ -34,7 +34,21 @@ class Agent():
 
         return message
 
+    def resolve_response(self, response: str):
+        current = response
+
+        while True:
+            next_output = self.tool(current)
+
+            if next_output == current:
+                break
+
+            current = next_output
+
+        return current
+
     def tool(self, response: str):
+
         lines = response.split("\n")
         final_response = []
 
@@ -56,7 +70,7 @@ class Agent():
                     with open(path, "w") as f:
                         f.write(text)
 
-                    final_response.append(self.prompt(f"system", "successfully wrote text into " + args[0]))
+                    final_response.append(self.prompt(f"system", f"wrote {text} into {args[0]}"))
                 elif tool == "summarize_website":
                     path = self.dir_path + args[0]
                     with open(path) as file:
@@ -73,7 +87,7 @@ class Agent():
                     todo_list.loc[len(todo_list)] = [title, "new"]  
                     todo_list.to_csv("tasks.csv", index=False) 
 
-                    final_response.append(self.prompt("system", f"Successfully added task {title} to TODO list"))
+                    final_response.append(self.prompt("system", f"Added task {title}"))
                 elif tool == "list_tasks":
                     todo_list = pd.read_csv(self.tasks_path)
                     list_str = todo_list.to_string()
@@ -87,7 +101,7 @@ class Agent():
                     todo_list.loc[int(id), 'status'] = status
                     todo_list.to_csv(self.tasks_path, index=False)
 
-                    final_response.append(self.prompt("system", f"Status of task '{todo_list.loc[int(id), 'title']}' changed to {status}"))
+                    final_response.append(self.prompt("system", f"Status changed to {status}"))
                 elif tool == "change_memory":
                     field, *value = args
                     value = " ".join(value)
@@ -100,7 +114,7 @@ class Agent():
                     with open(self.memory_path, "w") as f:
                         json.dump(memory, f, indent=2)
 
-                    final_response.append(self.prompt("system", f"Field {field} updated to {value}"))
+                    final_response.append(self.prompt("system", f"{field} updated to {value}"))
                 elif tool == "get_memory":
                     field = args[0]
 
@@ -142,7 +156,7 @@ class Agent():
         
         response = self.prompt("user", prompt)
 
-        tool_result = self.tool(response)
+        tool_result = self.resolve_response(response)
 
         return tool_result
 

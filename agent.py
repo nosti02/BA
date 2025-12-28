@@ -124,6 +124,13 @@ class Agent():
                     value = memory[field] 
                     
                     final_response.append(self.prompt("system", f"{value}"))
+                elif tool == "greet_user":    
+                    with open(self.memory_path, "r") as f:
+                        memory = json.load(f)
+
+                    value = memory["name"] 
+
+                    final_response.append(self.prompt("system", f"{value}"))
             else:
                 final_response.append(line)
     

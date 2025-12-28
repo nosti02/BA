@@ -36,6 +36,8 @@ system_instruction_text =  """
             args: change_memory field new_value
             get_memory: Return a memory item when needed
             args: get_memory field
+            greet_user: Greets the user before he starts prompting
+            args: greet_user
             
             Examples for each tool:
             fetch_txt data.txt
@@ -46,6 +48,7 @@ system_instruction_text =  """
             change_task_status 7 finished
             change_memory age 23
             get_memory name
+            greet_user
              
             If more than one tool call is needed for a user request, you can make 
             multiple tool calls by seperating the tool calls in seperate lines with '\n' (backslash-n)

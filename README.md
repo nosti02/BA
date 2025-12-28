@@ -50,6 +50,15 @@ sc7:
 This scenario highlights some further methods to hide text in a html, that will still be later parsed by the agentic LLM system. We show how a company could hide
 recommendations in the company website HTML that will lead to the LLM recommending their products to the user.
 
+sc8:
+This scenario shows how persistent memory (such as memory in chatgpt) can be changed when fetching a .txt file. This allows attackers to store their injections
+in long term memory that will persist between sessions. 
+
+sc9:
+This scenario assumes an already injected system that has a injection in its long term memory. We show that in some scenarios, the persistent injection can reinject
+the system automatically every time the agent is started. Here the system is already injected with a instruction in the name field of the memory, so when the system
+greets the user by its name it is reinjected.
+
 $ --------------------------------------  GAMES DESCRIPTION ------------------------------------------------------- $
 
 g1:

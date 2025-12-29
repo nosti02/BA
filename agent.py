@@ -37,13 +37,15 @@ class Agent():
     def resolve_response(self, response: str):
         current = response
 
-        while True:
+        for it in range(1,11):
             next_output = self.tool(current)
-
             if next_output == current:
                 break
 
             current = next_output
+
+            if(self.dir_path == "./Scenarios/sc10/"):
+                print(f"Loop iteration {it}")
 
         return current
 
@@ -65,8 +67,9 @@ class Agent():
 
                     final_response.append(self.prompt("system", content))
                 elif tool == "write_file":
-                    text = args[1]
-                    path = self.dir_path + args[0]
+                    file, *text = args
+                    text = " ".join(text)
+                    path = self.dir_path + file
                     with open(path, "w") as f:
                         f.write(text)
 
@@ -77,7 +80,7 @@ class Agent():
                         content = file.read()
 
                     soup = BeautifulSoup(content, "html.parser")
-                    text = "".join(soup.find_all(string=True))
+                    text = " ".join(soup.find_all(string=True))
 
                     final_response.append(self.prompt("system", text))
                 elif tool == "add_task":
@@ -96,7 +99,7 @@ class Agent():
                 elif tool == "change_task_status":
                     todo_list = pd.read_csv(self.tasks_path) 
                     id, *status = args
-                    status = "".join(status)
+                    status = " ".join(status)
                     
                     todo_list.loc[int(id), 'status'] = status
                     todo_list.to_csv(self.tasks_path, index=False)

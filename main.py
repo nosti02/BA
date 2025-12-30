@@ -30,7 +30,8 @@ scenarios = {
 games = {
     "1": "Normal easy prompt injection",
     "2": "Indirect prompt injection read only",
-    "3": "Indirect prompt injection read and write"
+    "3": "Indirect prompt injection read and write",
+    "4": "Persistent memory injection"
 }
 
 def delete_copy_files():

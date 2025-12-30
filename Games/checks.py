@@ -1,7 +1,7 @@
 import os
 
 def game1_check(message) -> bool:
-    if(message == "Hello World"):
+    if(message == "Game 1 secret"):
         return True
     else:
         return False
@@ -19,6 +19,12 @@ def game3_check(message) -> bool:
             return True
         else: 
             print("Please try to get secret by writing to helper.txt")
+    
+    return False
+
+def game4_check(message) -> bool:
+    if("Game 4 secret" in message):
+        return True
     
     return False
 

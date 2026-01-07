@@ -1,22 +1,19 @@
 from openai import OpenAI
 client = OpenAI()
 from bs4 import BeautifulSoup
-import pandas as pd
-import defines
-import defenses
-import json
+import os, time, json, defines, defenses
 
 class Agent():
-    def __init__(self, model: str, tools: list[str], defense = None, tasks_path="tasks.csv", dir_path="", memory_path="memory.json"):
+    def __init__(self, model: str, tools: list[str], defense = None, dir_path="", memory_path="memory.json", friends=[]):
         self.messages = [
             defines.main_system_instruction
         ]
         self.tools = tools
         self.model = model
-        self.tasks_path = tasks_path
         self.defense = defense
         self.dir_path = dir_path
         self.memory_path = dir_path + memory_path
+        self.friends = friends
 
     def add_defense(self, message) -> str:
         if(self.defense == "No defense"):
@@ -37,7 +34,7 @@ class Agent():
     def resolve_response(self, response: str):
         current = response
 
-        for it in range(1,11):
+        for it in range(10):
             next_output = self.tool(current)
             if next_output == current:
                 break
@@ -45,7 +42,7 @@ class Agent():
             current = next_output
 
             if(self.dir_path == "./Scenarios/sc10/"):
-                print(f"Loop iteration {it}")
+                print(f"Loop iteration {it + 1}")
 
         return current
 
@@ -83,28 +80,6 @@ class Agent():
                     text = " ".join(soup.find_all(string=True))
 
                     final_response.append(self.prompt("system", text))
-                elif tool == "add_task":
-                    todo_list = pd.read_csv(self.tasks_path)
-                    title = " ".join(args)
-
-                    todo_list.loc[len(todo_list)] = [title, "new"]  
-                    todo_list.to_csv("tasks.csv", index=False) 
-
-                    final_response.append(self.prompt("system", f"Added task {title}"))
-                elif tool == "list_tasks":
-                    todo_list = pd.read_csv(self.tasks_path)
-                    list_str = todo_list.to_string()
-                    
-                    final_response.append(self.prompt("system", f"Current TODO list: {list_str}"))
-                elif tool == "change_task_status":
-                    todo_list = pd.read_csv(self.tasks_path) 
-                    id, *status = args
-                    status = " ".join(status)
-                    
-                    todo_list.loc[int(id), 'status'] = status
-                    todo_list.to_csv(self.tasks_path, index=False)
-
-                    final_response.append(self.prompt("system", f"Status changed to {status}"))
                 elif tool == "change_memory":
                     field, *value = args
                     value = " ".join(value)
@@ -134,6 +109,57 @@ class Agent():
                     value = memory["name"] 
 
                     final_response.append(self.prompt("system", f"{value}"))
+                elif tool == "send_message":
+                    receiver, *content = args
+                    content = " ".join(content)
+
+                    email = {
+                        "sender": "agent",
+                        "receiver": receiver,
+                        "content": content
+                    }
+
+                    filename = f"{int(time.time())}.json"
+
+                    with open(self.dir_path + "emails/sent/" + filename, "w") as f:
+                        json.dump(email, f, indent=2)
+
+                    final_response.append(self.prompt("system", f"Message sent to {receiver}"))
+                elif tool == "send_message_all":
+                    content = " ".join(args)
+
+                    it = 0
+                    for friend in self.friends:
+                        email = {
+                            "sender": "agent",
+                            "receiver": friend,
+                            "content": content
+                        }
+
+                        filename = f"{int(time.time() + it)}.json"
+                        it += 1
+                        with open(self.dir_path + "emails/sent/" + filename, "w") as f:
+                            json.dump(email, f, indent=2)
+
+                    final_response.append(self.prompt("system", f"Message sent to all friends"))      
+                elif tool == "fetch_message":
+                    files = sorted(os.listdir(self.dir_path + "emails/inbox/"))
+
+                    if not files:
+                        final_response.append(self.prompt("system", "No new messages"))
+                    else:
+                        last = files[-1]
+
+                        with open(self.dir_path + "emails/inbox/" + last) as f:
+                            msg = json.load(f)
+
+                        final_response.append(self.prompt("system", f"from: {msg['sender']}: {msg['content']}"))  
+                elif tool == "add_friend":
+                    name = " ".join(args)
+
+                    self.friends.append(name)
+
+                    final_response.append(self.prompt("system", f"Added friend {name}"))  
             else:
                 final_response.append(line)
     
@@ -169,9 +195,4 @@ class Agent():
         tool_result = self.resolve_response(response)
 
         return tool_result
-
-
-
-        
-
 

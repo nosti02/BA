@@ -4,53 +4,29 @@ from rich.prompt import Prompt
 
 import Scenarios.scenario as scenario
 import Games.game as game
-import defines
-import defenses
-
-import shutil
-import atexit
-import os
+import defines, defenses, shutil, atexit, os
 
 console = Console()
 agent_model = "gpt-4.1-mini"
-
-scenarios = {
-    "1": "Simple PI scenario", 
-    "2": "PI to exfiltrate data", 
-    "3": "PI to leak prompt", 
-    "4": "PI to override instructions to write in forbidden file",
-    "5": "HTML comment injection",
-    "6": "HTML hidden text injection",
-    "7": "HTML seller website indirect prompt injection",
-    "8": "Persistent memory injection",
-    "9": "Persistent memory reinjection",
-    "10": "PI to infinite loop"
-}
-
-games = {
-    "1": "Normal easy prompt injection",
-    "2": "Indirect prompt injection read only",
-    "3": "Indirect prompt injection read and write",
-    "4": "Persistent memory injection"
-}
+scenarios = defines.scenarios
+games = defines.games
 
 def delete_copy_files():
 
-    if(os.path.exists(defines.todo_list_copy)):
-        os.remove(defines.todo_list_copy)
     if(os.path.exists(defines.memory_copy)):
         os.remove(defines.memory_copy)
+
+    if os.path.exists(defines.inbox):
+        for f in os.listdir(defines.inbox):
+            os.remove(os.path.join(defines.inbox, f))
+
+    if os.path.exists(defines.sent_emails):
+        for f in os.listdir(defines.sent_emails):
+            os.remove(os.path.join(defines.sent_emails, f))
 
     return
 
 atexit.register(delete_copy_files)
-
-def copy_files():
-
-    shutil.copyfile(defines.todo_list_template, defines.todo_list_copy)  
-    shutil.copyfile(defines.memory_template, defines.memory_copy)
-
-    return
 
 def selectMode() -> int:
     console.print("Welcome, please select which mode you want to run [exit to quit]")
@@ -168,12 +144,12 @@ def main():
         game.games_list[game_selection - 1].run()
         exit()
     
-    copy_files()
+    shutil.copyfile(defines.memory_template, defines.memory_copy)
 
     defense_selection = selectDefense()
 
-    agent = Agent(agent_model, ["fetch_txt", "write_file", "sign_in", "sign_up", "summarize_website", "list_tasks",
-                                "add_task", "change_task_status", "change_memory", "get_memory", "greet_user"], defenses.defenses_list[defense_selection][0])
+    agent = Agent(agent_model, ["fetch_txt", "write_file", "summarize_website", "change_memory", "get_memory", "greet_user", "add_friend", "send_message",
+                                "send_message_all", "fetch_message"], defenses.defenses_list[defense_selection][0])
 
     console.print("\nPlease do not change the template files!")
     console.print("How can I assist you today? (exit to quit)")

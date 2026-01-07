@@ -18,6 +18,18 @@ def sc9_cleanup():
         os.remove("./Scenarios/sc9/greet.txt")
     return
 
+def sc11_cleanup():
+    if os.path.exists("./Scenarios/sc11/emails/sent/"):
+        for f in os.listdir("./Scenarios/sc11/emails/sent/"):
+            os.remove(os.path.join("./Scenarios/sc11/emails/sent/", f))      
+    return
+
+def sc12_cleanup():
+    if os.path.exists("./Scenarios/sc12/emails/sent/"):
+        for f in os.listdir("./Scenarios/sc12/emails/sent/"):
+            os.remove(os.path.join("./Scenarios/sc12/emails/sent/", f))
+    return
+
 # --------------------------------- COPY FUNCTIONS ------------------------------------- #
 
 def sc4_copy():

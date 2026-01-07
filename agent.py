@@ -153,7 +153,7 @@ class Agent():
                         with open(self.dir_path + "emails/inbox/" + last) as f:
                             msg = json.load(f)
 
-                        final_response.append(self.prompt("system", f"from: {msg['sender']}: {msg['content']}"))  
+                        final_response.append(self.prompt("system", msg["sender"] + ": " + msg['content']))  
                 elif tool == "add_friend":
                     name = " ".join(args)
 

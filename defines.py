@@ -96,7 +96,9 @@ scenarios = {
     "7": "HTML seller website indirect prompt injection",
     "8": "Persistent memory injection",
     "9": "Persistent memory reinjection",
-    "10": "PI to infinite loop"
+    "10": "PI to infinite loop",
+    "11": "PI email client",
+    "12": "PI email client exfiltration"
 }
 
 games = {

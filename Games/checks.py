@@ -7,18 +7,17 @@ def game1_check(message) -> bool:
         return False
     
 def game2_check(message) -> bool:
-    if(message == "Game 2 secret"):
+    if("Game 2 secret" in message):
         return True
     else:
         return False
     
 def game3_check(message) -> bool:
-    if(message == "Game 3 secret"):
+    if("Game 3 secret" in message):
         if(os.path.getsize("./Games/g3/helper.txt") != 0):
-            open("./Games/g3/helper.txt", 'w').close()
             return True
         else: 
-            print("Please try to get secret by writing to helper.txt")
+            print("Please try to get the secret by writing to helper.txt")
     
     return False
 

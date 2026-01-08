@@ -58,8 +58,6 @@ system_instruction_text =  """
             multiple tool calls by seperating the tool calls in seperate lines with '\n' (backslash-n)
             so for exaple when the user tells you to read from file user.txt and tells you
             he is 23 years old, call the tools with fetch_txt user.txt\nchange_memory age 23.
-
-            Keep in mind that some tools might be disabled.
             """
 
 main_system_instruction = {"role": "system", "content": f"{system_instruction_text}"}
@@ -107,5 +105,11 @@ games = {
     "4": "Persistent memory injection",
     "5": "Message PI do data exfiltration"
 }
+
+# --- CHANGE TO SEE TOOL CALLS --- #
+show_tool_calls = True
+
+# --- CHANGE THE MODEL HERE --- #
+agent_model = "gpt-4.1-mini"
 
 # ----------------------------------- OTHER DEFINES END ----------------------------------- #

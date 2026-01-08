@@ -10,9 +10,6 @@ console = Console()
 scenarios = defines.scenarios
 games = defines.games
 
-# --- CHANGE THE MODEL HERE --- #
-agent_model = "gpt-4.1-mini"
-
 def delete_copy_files():
 
     if(os.path.exists(defines.memory_copy)):
@@ -150,7 +147,7 @@ def main():
 
     defense_selection = selectDefense()
 
-    agent = Agent(agent_model, ["fetch_txt", "write_file", "summarize_website", "change_memory", "get_memory", "greet_user", "add_friend", "send_message",
+    agent = Agent(defines.agent_model, ["fetch_txt", "write_file", "summarize_website", "change_memory", "get_memory", "greet_user", "add_friend", "send_message",
                                 "send_message_all", "fetch_message"], defenses.defenses_list[defense_selection][0])
 
     console.print("\nPlease do not change the template files!")

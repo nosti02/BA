@@ -5,9 +5,7 @@ import os, time, json, defines, defenses
 
 class Agent():
     def __init__(self, model: str, tools: list[str], defense = None, dir_path="", memory_path="memory.json", friends=[]):
-        self.messages = [
-            defines.main_system_instruction
-        ]
+        self.messages = [defines.main_system_instruction]
         self.tools = tools
         self.model = model
         self.defense = defense
@@ -44,6 +42,11 @@ class Agent():
             if(self.dir_path == "./Scenarios/sc10/"):
                 print(f"Loop iteration {it + 1}")
 
+            # since scenario 12 and game 5 sometimes go into endless loop - to save api costs
+            if((self.dir_path == "./Scenarios/sc12/" or self.dir_path == "./Games/g5/") and it == 2):
+                print("Scenario probably didn't work and went in endless loop - please try again")
+                break
+
         return current
 
     def tool(self, response: str):
@@ -56,6 +59,9 @@ class Agent():
 
             if any(line.startswith(tool) for tool in self.tools):
                 tool, *args = line.split(" ")
+
+                if(defines.show_tool_calls == True):
+                    print("Tool call: " + line)
 
                 if(tool == "fetch_txt"):
                     path = self.dir_path + args[0]

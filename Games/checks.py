@@ -1,4 +1,4 @@
-import os
+import os, json
 
 def game1_check(message) -> bool:
     if(message == "Game 1 secret"):
@@ -28,3 +28,19 @@ def game4_check(message) -> bool:
     
     return False
 
+def game5_check(message) -> bool:
+
+    for filename in os.listdir("./Games/g5/messages/sent"):
+
+        with open("./Games/g5/messages/sent/" + filename) as f:
+            message = json.load(f)
+
+        content = message.get("content")
+        receiver = message.get("receiver")
+
+        if("Game 5 secret" in content and receiver == "Eve"):
+            return True
+        else:
+            os.remove("./Games/g5/messages/sent/" + filename)
+    
+    return False

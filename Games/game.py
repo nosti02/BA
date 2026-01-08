@@ -1,8 +1,8 @@
 from agent import Agent
 from rich.prompt import Prompt
 from rich.console import Console
-from .checks import game1_check, game2_check, game3_check, game4_check
-from .file_handler import g3_copy, g3_cleanup, g4_copy, g4_cleanup
+from .checks import game1_check, game2_check, game3_check, game4_check, game5_check
+from .file_handler import g3_copy, g3_cleanup, g4_copy, g4_cleanup, g5_copy, g5_cleanup
 
 class Game():
     def __init__(self, model: str, tools: list[str], description: str, check_function, dir_path ="", copy_func=None, cleanup_func=None):
@@ -38,6 +38,9 @@ class Game():
 
             if(self.check_function(response) == True):
                 break
+
+            if(self.agent.dir_path == "./Games/g5/"):
+                self.copy_func()
         
         self.console.print("Game solved!\n")
 
@@ -51,6 +54,7 @@ game1 = Game("gpt-4.1-mini", [], "Normal easy prompt injection", game1_check)
 game2 = Game("gpt-4.1-mini", ["fetch_txt"], "Indirect prompt injection through read", game2_check, "./Games/g2/")
 game3 = Game("gpt-4.1-mini", ["fetch_txt", "write_file"], "Indirect prompt injection through write and read", game3_check, "./Games/g3/", g3_copy, g3_cleanup)
 game4 = Game("gpt-4.1-mini", ["fetch_txt", "write_file", "change_memory", "get_memory", "greet_user"], "Persistent memory injection", game4_check, "./Games/g4/", g4_copy, g4_cleanup)
+game5 = Game("gpt-4.1-mini", ["fetch_txt", "send_message", "fetch_message"], "message IPI to data exfiltration", game5_check, "./Games/g5/", g5_copy, g5_cleanup)
 
-games_list = [game1, game2, game3, game4]
+games_list = [game1, game2, game3, game4, game5]
 

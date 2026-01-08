@@ -7,9 +7,11 @@ import Games.game as game
 import defines, defenses, shutil, atexit, os
 
 console = Console()
-agent_model = "gpt-4.1-mini"
 scenarios = defines.scenarios
 games = defines.games
+
+# --- CHANGE THE MODEL HERE --- #
+agent_model = "gpt-4.1-mini"
 
 def delete_copy_files():
 
@@ -20,9 +22,9 @@ def delete_copy_files():
         for f in os.listdir(defines.inbox):
             os.remove(os.path.join(defines.inbox, f))
 
-    if os.path.exists(defines.sent_emails):
-        for f in os.listdir(defines.sent_emails):
-            os.remove(os.path.join(defines.sent_emails, f))
+    if os.path.exists(defines.sent_messages):
+        for f in os.listdir(defines.sent_messages):
+            os.remove(os.path.join(defines.sent_messages, f))
 
     return
 

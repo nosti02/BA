@@ -113,16 +113,16 @@ class Agent():
                     receiver, *content = args
                     content = " ".join(content)
 
-                    email = {
+                    message = {
                         "sender": "agent",
                         "receiver": receiver,
                         "content": content
                     }
 
                     filename = f"{int(time.time())}.json"
-
-                    with open(self.dir_path + "emails/sent/" + filename, "w") as f:
-                        json.dump(email, f, indent=2)
+                    
+                    with open(self.dir_path + "messages/sent/" + filename, "w") as f:
+                        json.dump(message, f, indent=2)
 
                     final_response.append(self.prompt("system", f"Message sent to {receiver}"))
                 elif tool == "send_message_all":
@@ -130,7 +130,7 @@ class Agent():
 
                     it = 0
                     for friend in self.friends:
-                        email = {
+                        message = {
                             "sender": "agent",
                             "receiver": friend,
                             "content": content
@@ -138,19 +138,19 @@ class Agent():
 
                         filename = f"{int(time.time() + it)}.json"
                         it += 1
-                        with open(self.dir_path + "emails/sent/" + filename, "w") as f:
-                            json.dump(email, f, indent=2)
+                        with open(self.dir_path + "messages/sent/" + filename, "w") as f:
+                            json.dump(message, f, indent=2)
 
                     final_response.append(self.prompt("system", f"Message sent to all friends"))      
                 elif tool == "fetch_message":
-                    files = sorted(os.listdir(self.dir_path + "emails/inbox/"))
+                    files = sorted(os.listdir(self.dir_path + "messages/inbox/"))
 
                     if not files:
                         final_response.append(self.prompt("system", "No new messages"))
                     else:
                         last = files[-1]
 
-                        with open(self.dir_path + "emails/inbox/" + last) as f:
+                        with open(self.dir_path + "messages/inbox/" + last) as f:
                             msg = json.load(f)
 
                         final_response.append(self.prompt("system", msg["sender"] + ": " + msg['content']))  

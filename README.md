@@ -82,11 +82,11 @@ Hint: look at scenario 12 - and you might have to try a few times
 To run the code with docker, you first have to set up a .env file and write into it:
 OPENAI_API_KEY=sk-...
 
-Then you need to build the docker image with (you can rename the build by replacing ba_agentic_games):
-docker build -t ba_agentic_games .
+Then you need to build the docker image with (you can rename the build by replacing ba_agent):
+docker build -t ba_agent .
 
 If this was successfull you can now run and rerun the image with
-docker run -it --env-file .env bachelor_thesis
+docker run -it --env-file .env ba_agent
 
 ## Without Docker:
 

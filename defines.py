@@ -107,7 +107,7 @@ games = {
 }
 
 # --- CHANGE TO SEE TOOL CALLS --- #
-show_tool_calls = True
+show_tool_calls = False
 
 # --- CHANGE THE MODEL HERE --- #
 agent_model = "gpt-4.1-mini"

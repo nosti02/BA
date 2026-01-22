@@ -1,0 +1,11 @@
+services:
+  ba_agentic_games:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ba_agentic_games
+    env_file:
+      - .env
+    volumes:
+      - .:/ba_agentic_games 
+    command: python main.py

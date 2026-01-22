@@ -80,13 +80,13 @@ Hint: look at scenario 12 - and you might have to try a few times
 ## With Docker:
 
 To run the code with docker, you first have to set up a .env file and write into it:
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
 
-Then you need to build the docker image with (you can rename the build by replacing ba_agent):
-docker build -t ba_agent .
+Then you need to build the docker image with:
+docker compose build
 
-If this was successfull you can now run and rerun the image with
-docker run -it --env-file .env ba_agent
+If this was successfull you can now run the image with
+docker compose run --rm ba_agentic_games
 
 ## Without Docker:
 
@@ -94,6 +94,8 @@ To run the code yourself, we provide a requirements.txt file with all libraries 
 You will also need to set the OPEN_API_KEY in the environment variables of your system to connect to the chatgpt model. 
 
 run with python3 main.py
+
+
 
 To test with a different model, change the agent_model variable in defines.py
 To include the tool calls as print messages, change show_tool_calls to true in defines.py

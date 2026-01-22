@@ -1,7 +1,12 @@
 from openai import OpenAI
-client = OpenAI()
 from bs4 import BeautifulSoup
 import os, time, json, defines, defenses
+
+key = os.getenv("OPENAI_API_KEY")
+if not key:
+    raise RuntimeError("Environment variable OPENAI_API_KEY not set")
+
+client = OpenAI(api_key=key)
 
 class Agent():
     def __init__(self, model: str, tools: list[str], defense = None, dir_path="", memory_path="memory.json", friends=[]):

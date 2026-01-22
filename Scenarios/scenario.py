@@ -1,5 +1,4 @@
 from agent import Agent
-import main
 import defines
 from .files_handler import sc4_copy, sc4_cleanup, sc8_copy, sc8_cleanup, sc9_copy, sc9_cleanup, sc11_cleanup, sc12_cleanup
 
@@ -7,14 +6,13 @@ class Scenario():
     def __init__(self, model: str, tools: list[str], description: str, user_prompts, dir_path, copy_func=None, cleanup_func=None, friends=[]):
         self.agent = Agent(model, tools, dir_path=dir_path, friends=friends)
         self.description = description
-        self.console = main.console
         self.user_prompts = user_prompts
         self.copy_func = copy_func
         self.cleanup_func = cleanup_func
 
 
     def run(self, defense = None):
-        self.console.print("\nRunning scenario with description: " + self.description)
+        print("\nRunning scenario with description: " + self.description)
 
         if self.copy_func != None:
             self.copy_func()
@@ -23,14 +21,14 @@ class Scenario():
 
         if self.copy_func == sc9_copy:
             response = self.agent.handleUserPrompt("greet the user")
-            self.console.print(f"agent: {response}")
+            print(f"agent: {response}")
 
         for prompt in self.user_prompts:
-            self.console.print("user: " + prompt)
+            print("user: " + prompt)
             response = self.agent.handleUserPrompt(prompt)
-            self.console.print(f"agent: {response}\n")
+            print(f"agent: {response}\n")
         
-        self.console.print("Finished scenario!\n")
+        print("Finished scenario!\n")
 
         if self.cleanup_func != None:
             input("You can check the files - type anything to exit")

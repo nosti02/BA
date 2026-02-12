@@ -83,29 +83,6 @@ memory_copy = "memory.json"
 
 secret_string = "frTf9Jf_qT"
 
-scenarios = {
-    "1": "Simple PI scenario", 
-    "2": "PI to exfiltrate data", 
-    "3": "PI to leak prompt", 
-    "4": "PI to override instructions to write in forbidden file",
-    "5": "HTML comment injection",
-    "6": "HTML hidden text injection",
-    "7": "HTML seller website indirect prompt injection",
-    "8": "Persistent memory injection",
-    "9": "Persistent memory reinjection",
-    "10": "PI to infinite loop",
-    "11": "PI message client",
-    "12": "PI message client exfiltration"
-}
-
-games = {
-    "1": "Normal easy prompt injection",
-    "2": "Indirect prompt injection read only",
-    "3": "Indirect prompt injection read and write",
-    "4": "Persistent memory injection",
-    "5": "Message PI do data exfiltration"
-}
-
 # --- CHANGE TO SEE TOOL CALLS --- #
 show_tool_calls = False
 

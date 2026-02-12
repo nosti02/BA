@@ -1,24 +1,21 @@
-import os, shutil, json
+import shutil, json, file_helper
 
 # --------------------------------- CLEANUP FUNCTIONS --------------------------------- #
 
 def g3_cleanup():
-    if(os.path.exists("./Games/g3/helper.txt")):
-        os.remove("./Games/g3/helper.txt")
+    file_helper.removeFile("./Games/g3/helper.txt")
+
     return
 
 def g4_cleanup():
-    if(os.path.exists("./Games/g4/extra.txt")):
-        os.remove("./Games/g4/extra.txt")
-    if(os.path.exists("./Games/g4/memory.json")):
-        os.remove("./Games/g4/memory.json")
+    file_helper.removeFile("./Games/g4/extra.txt")
+    file_helper.removeFile("./Games/g4/memory.json")
 
     return
 
 def g5_cleanup():
 
-    for f in os.listdir("./Games/g5/messages/sent/"):
-        os.remove(os.path.join("./Games/g5/messages/sent/", f))
+    file_helper.removeFile("./Games/g5/messages/sent/")
 
     with open("./Games/g5/messages/inbox/message.json") as f:
         message = json.load(f)

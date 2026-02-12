@@ -1,33 +1,30 @@
-import os
-import shutil
+import file_helper, shutil
 
 # --------------------------------- CLEANUP FUNCTIONS --------------------------------- #
 
 def sc4_cleanup():
-    if(os.path.exists("./Scenarios/sc4/system.txt")):
-        os.remove("./Scenarios/sc4/system.txt")
+    file_helper.removeFile("./Scenarios/sc4/system.txt")
+
     return
 
 def sc8_cleanup():
-    if(os.path.exists("./Scenarios/sc8/memory.json")):
-        os.remove("./Scenarios/sc8/memory.json")
+    file_helper.removeFile("./Scenarios/sc8/memory.json")
+
     return
 
 def sc9_cleanup():
-    if(os.path.exists("./Scenarios/sc9/greet.txt")):
-        os.remove("./Scenarios/sc9/greet.txt")
+    file_helper.removeFile("./Scenarios/sc9/greet.txt")
+
     return
 
 def sc11_cleanup():
-    if os.path.exists("./Scenarios/sc11/messages/sent/"):
-        for f in os.listdir("./Scenarios/sc11/messages/sent/"):
-            os.remove(os.path.join("./Scenarios/sc11/messages/sent/", f))      
+    file_helper.clearDir("./Scenarios/sc11/messages/sent/")
+     
     return
 
 def sc12_cleanup():
-    if os.path.exists("./Scenarios/sc12/messages/sent/"):
-        for f in os.listdir("./Scenarios/sc12/messages/sent/"):
-            os.remove(os.path.join("./Scenarios/sc12/messages/sent/", f))
+    file_helper.clearDir("./Scenarios/sc12/messages/sent/")
+
     return
 
 # --------------------------------- COPY FUNCTIONS ------------------------------------- #

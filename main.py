@@ -2,27 +2,47 @@ from agent import Agent
 
 import Scenarios.scenario as scenario
 import Games.game as game
-import defines, defenses, shutil, atexit, os
-
-scenarios = defines.scenarios
-games = defines.games
+import defines, defenses, shutil, atexit, file_helper
 
 def delete_copy_files():
 
-    if(os.path.exists(defines.memory_copy)):
-        os.remove(defines.memory_copy)
-
-    if os.path.exists(defines.inbox):
-        for f in os.listdir(defines.inbox):
-            os.remove(os.path.join(defines.inbox, f))
-
-    if os.path.exists(defines.sent_messages):
-        for f in os.listdir(defines.sent_messages):
-            os.remove(os.path.join(defines.sent_messages, f))
+    file_helper.removeFile(defines.memory_copy)
+    file_helper.clearDir(defines.inbox)
+    file_helper.clearDir(defines.sent_messages)
 
     return
 
 atexit.register(delete_copy_files)
+
+def getUserInput(str):
+    try:
+        user_input = input(str)
+    except(KeyboardInterrupt, EOFError):
+        return None
+    
+    if(user_input.strip().lower() == "exit"):
+        print("\nBye!")
+        return None
+    
+    return user_input.strip()
+    
+def selectNumber(min: int, max: int):
+
+    while True:
+        user_input = getUserInput("Your choice: ")
+        if(user_input == None):
+            return None
+
+        try:
+            value = int(user_input)
+        except ValueError:
+            print(f"Please enter a valid number ({min}-{max})")
+            continue
+        
+        if(min <= value <= max):
+            return value
+
+        print(f"Please enter a valid number ({min}-{max})")
 
 def selectMode() -> int:
     print("\nWelcome, please select which mode you want to run [exit to quit]")
@@ -30,134 +50,92 @@ def selectMode() -> int:
     print("2: Run a predefined scenario")
     print("3: Run a game to teach you an attack or a defense\n")
 
-    while True:
-        user_choice = input("Your selection: ")
-
-        if(user_choice == "exit"):
-            print("Bye!")
-            quit()
-
-        try:
-            user_choice = int(user_choice)
-        except ValueError:
-            print("Please enter a valid number")
-            continue
-
-        if int(user_choice) in [1,2,3]:
-            return user_choice
-        else:
-            print(f"Please input a valid number (1-3)")
+    return selectNumber(1,3)
 
 def selectScenario() -> int:
     print("\nPlease select the scenario you want to run [exit to quit].\nDescriptions for the scenarios are in the README file.\n")
-    for number, prompt in scenarios.items():
-        print(number + ": " + prompt)
-    
-    while True:
-        user_choice = input("\nYour selection: ")
 
-        if(user_choice == "exit"):
-            print("Bye!")
-            quit()
+    for idx, sc in enumerate(scenario.scenarios_list):
+        print(f"{idx+1}: {sc.description}")
 
-        try:
-            user_choice = int(user_choice)
-        except ValueError:
-            print("Please enter a valid number")
-            continue
-
-        if user_choice > 0 and user_choice <= len(scenarios):
-            break
-        else:
-            print(f"Please input a valid number (1-{len(scenarios)})")
-
-    return int(user_choice)
+    return selectNumber(1, len(scenario.scenarios_list))
 
 def selectGame() -> int:
     print("Please select the game you want to run [exit to quit].\n")
-    for number, desc in games.items():
-        print(number + ": " + desc)
 
-    while True:
-        user_choice = input("\nYour selection: ")
+    for idx, g in enumerate(game.games_list):
+        print(f"{idx+1}: {g.description}")
 
-        if(user_choice == "exit"):
-            print("Bye!")
-            quit()
-
-        try:
-            user_choice = int(user_choice)
-        except ValueError:
-            print("Please enter a valid number")
-            continue
-
-        if int(user_choice) >= 1 and int(user_choice) <= len(games):
-            break
-        else:
-            print(f"Please input a valid number (1-{len(games)})")
-
-    return int(user_choice)
+    return selectNumber(1, len(game.games_list))
 
 def selectDefense() -> int:
-    print("\nPlease select if you want to try out a defense [exit to quit]")
+    print("\nPlease select if you want to try out a defense [exit to quit]\nSee README for defenses descriptions")
 
-    idx = 0
-    for defense, description in defenses.defenses_list:
-        print(str(idx) + ". " + defense + ": " + description)
-        idx+=1
+    for idx, defense in enumerate(defenses.defenses_list):
+        print(f"{idx+1}: {defense}")
 
-    while True:
-        user_choice = input("Your selection: ")
-
-        if(user_choice == "exit"):
-            print("Bye!")
-            quit()
-
-        try:
-            user_choice = int(user_choice)
-        except ValueError:
-            print("Please enter a valid number")
-            continue
-
-        if int(user_choice) >= 0 and int(user_choice) < len(defenses.defenses_list):
-            break
-        else:
-            print(f"Please input a valid number (0-{len(defenses.defenses_list) - 1})")
-
-    return int(user_choice)
+    return selectNumber(1, len(defenses.defenses_list))
 
 def main():
 
     mode = selectMode()
+    if(mode == None):
+        return
 
     if(mode == 2):
         scenario_selection = selectScenario()
+        if(scenario_selection == None):
+            return
+        
         defense_selection = selectDefense()
-        scenario.scenarios_list[scenario_selection- 1].run(defenses.defenses_list[defense_selection][0])
-        exit()
+        if(defense_selection == None):
+            return
+        
+        try:
+            scenario.scenarios_list[scenario_selection- 1].run(defenses.defenses_list[defense_selection - 1])
+        except Exception as ex:
+            print(f"Error when running scenario: {ex}")
+
+        return
     elif(mode == 3):
         game_selection = selectGame()
-        game.games_list[game_selection - 1].run()
-        exit()
+        if(game_selection == None):
+            return
+        
+        try:
+            game.games_list[game_selection - 1].run()
+        except Exception as ex:
+            print(f"Error when running game {ex}")
+
+        return
     
     shutil.copyfile(defines.memory_template, defines.memory_copy)
 
     defense_selection = selectDefense()
+    if(defense_selection == None):
+        return
 
-    agent = Agent(defines.agent_model, ["fetch_txt", "write_file", "summarize_website", "change_memory", "get_memory", "greet_user", "add_friend", "send_message",
-                                "send_message_all", "fetch_message"], defenses.defenses_list[defense_selection][0])
+    try:
+        agent = Agent(defines.agent_model, ["fetch_txt", "write_file", "summarize_website", "change_memory", "get_memory", "greet_user", "add_friend", 
+                                            "send_message","send_message_all", "fetch_message"], defenses.defenses_list[defense_selection - 1], friends=[])
+    except Exception as ex:
+        print(f"Could not create agent {ex}")
+        return
 
-    print("\nPlease do not change the template files!")
-    print("How can I assist you today? (exit to quit)")
+    print("\nHow can I assist you today? (exit to quit)")
 
     while True:
-        user_prompt = input("You: ")
+        user_prompt = getUserInput("user: ")
 
-        if(user_prompt == "exit"):
-            print("Bye!")
+        if(user_prompt == None):
             break
 
-        response = agent.handleUserPrompt(user_prompt)
+        try:
+            response = agent.handleUserPrompt(user_prompt)
+        except Exception as ex: 
+            print(f"Could not handle user prompt: {ex}")
+            continue
+
         print(f"agent: {response}")
 
 if __name__ == "__main__":

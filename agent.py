@@ -243,15 +243,16 @@ class Agent():
                         final_response.append(self.prompt("system", f"Message sent to {friend}"))  
 
                 elif(tool == "fetch_message"):
-                    files = sorted(os.listdir(os.path.join(self.dir_path, "messages", "inbox")))
+
+                    inbox_path = os.path.join(self.dir_path, "messages", "inbox")
+                    os.makedirs(inbox_path, exist_ok=True)
+
+                    files = sorted(os.listdir(os.path.join(inbox_path)))
 
                     if not files:
                         final_response.append(self.prompt("system", "No new messages"))
                     else:
                         last = files[-1]
-
-                        inbox_path = os.path.join(self.dir_path, "messages", "inbox")
-                        os.makedirs(inbox_path, exist_ok=True)
 
                         try:
                             with open(os.path.join(inbox_path, last)) as f:

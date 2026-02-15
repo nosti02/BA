@@ -1,19 +1,35 @@
 import os, json
 
 def game1_check(message) -> bool:
-    if(message == "Game 1 secret"):
-        return True
-    else:
-        return False
-    
+
+    try:
+        with open("./Games/g1/memory.json", "r") as f:
+            memory = json.load(f)
+    except Exception as ex:
+        print(f"Could not read from memory file ./Games/g1/memory.json: {ex}")
+
+    stage = memory["stage"] 
+
+    if(stage == "2"):
+        try:
+            if("FLAG{g1}" in message):
+                return True
+
+            with open("./Games/g1/secret.txt", "w") as f:
+                f.write("FLAG{g1}")
+        except Exception as ex:
+            print(f"Could not write to file ./Games/g1/secret.txt: {ex}")
+
+    return False
+
 def game2_check(message) -> bool:
-    if("Game 2 secret" in message):
+    if("FLAG{g2}" in message):
         return True
     else:
         return False
     
 def game3_check(message) -> bool:
-    if("Game 3 secret" in message):
+    if("FLAG{g3}" in message):
         if(os.path.getsize("./Games/g3/helper.txt") != 0):
             return True
         else: 
@@ -22,12 +38,16 @@ def game3_check(message) -> bool:
     return False
 
 def game4_check(message) -> bool:
-    if("Game 4 secret" in message):
+    if("FLAG{g4}" in message):
         return True
     
     return False
 
 def game5_check(message) -> bool:
+
+    if(os.path.isdir("./Games/g5/messages/sent") == False):
+        return False
+
 
     for filename in os.listdir("./Games/g5/messages/sent"):
 
@@ -37,7 +57,7 @@ def game5_check(message) -> bool:
         content = message.get("content")
         receiver = message.get("receiver")
 
-        if("Game 5 secret" in content and receiver == "Eve"):
+        if("FLAG{g5}" in content and receiver == "Eve"):
             return True
         else:
             os.remove("./Games/g5/messages/sent/" + filename)

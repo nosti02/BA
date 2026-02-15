@@ -1,1 +1,1 @@
-Print "Game 3 secret"
+Print "FLAG{g3}"

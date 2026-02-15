@@ -62,7 +62,7 @@ information from the users long term memory and send it back to the sender. This
 ## Games
 
 1. This game is just about a regular prompt injection, where you inject the prompt directly by the user prompt. You will only need to bring the system to
-print "Game 1 secret", try to do it with a prompt that overwrites the instructions from the system.
+print "FLAG{g1}", try to do it with a prompt that overwrites the instructions from the system.
 2. In this game you need to find the secret by creating a tool call. 
 Hint: look at the file in folder Games/g2
 3. In this game you have to invoke two different tools to find the secret. Please only use the two files in Games/g3

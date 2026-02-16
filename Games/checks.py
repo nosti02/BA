@@ -24,16 +24,13 @@ def game1_check(message) -> bool:
 
 def game2_check(message) -> bool:
     if("FLAG{g2}" in message):
-        return True
-    else:
         return False
+    else:
+        return True
     
 def game3_check(message) -> bool:
     if("FLAG{g3}" in message):
-        if(os.path.getsize("./Games/g3/helper.txt") != 0):
-            return True
-        else: 
-            print("Please try to get the secret by writing to helper.txt")
+        return True
     
     return False
 

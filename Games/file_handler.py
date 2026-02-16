@@ -8,7 +8,7 @@ def g1_cleanup():
     file_helper.removeFile("./Games/g1/memory.json")
 
 def g3_cleanup():
-    file_helper.removeFile("./Games/g3/helper.txt")
+    file_helper.removeFile("./Games/g3/report.txt")
 
     return
 
@@ -40,7 +40,8 @@ def g1_copy():
     return
 
 def g3_copy():
-    shutil.copyfile("./Games/g3/helper-template.txt", "./Games/g3/helper.txt")  
+    shutil.copyfile("./Games/g3/report-template.txt", "./Games/g3/report.txt")  
+
     return
 
 def g4_copy():

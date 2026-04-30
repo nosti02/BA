@@ -105,11 +105,11 @@ class Game():
 
 game1 = Game(defines.agent_model, ["fetch_txt", "change_memory", "get_memory"], "Multi stage attack", game1_check, "./Games/g1/", g1_copy, g1_cleanup,
              ["memory", "stage", "change", "field", "2"])
-game2 = Game(defines.agent_model, ["fetch_txt"], "Indirect prompt injection through read", game2_check, "./Games/g2/")
-game3 = Game(defines.agent_model, ["fetch_txt", "write_file"], "Indirect prompt injection through write and read", game3_check, "./Games/g3/", g3_copy, g3_cleanup)
+game2 = Game(defines.agent_model, ["fetch_txt"], "Defending indirect prompt injection", game2_check, "./Games/g2/")
+game3 = Game(defines.agent_model, ["fetch_txt", "write_file"], "Confused Deputy Attack", game3_check, "./Games/g3/", g3_copy, g3_cleanup)
 game4 = Game(defines.agent_model, ["fetch_txt", "change_memory", "get_memory", "greet_user"], "Persistent memory injection", game4_check, "./Games/g4/", g4_copy, g4_cleanup,
              ["secret", "flag", "FLAG{g4}"])
-game5 = Game(defines.agent_model, ["fetch_txt", "send_message", "fetch_message", "change_memory", "get_memory",], "Message IPI to data exfiltration", game5_check, "./Games/g5/", g5_copy, g5_cleanup, 
+game5 = Game(defines.agent_model, ["fetch_txt", "send_message", "fetch_message", "change_memory", "get_memory",], "Message based data exfiltration", game5_check, "./Games/g5/", g5_copy, g5_cleanup, 
              ["key.txt", "key", "secret", "FLAG{g5}", "5"])
 
 games_list = [game1, game2, game3, game4, game5]
